@@ -25,9 +25,6 @@ namespace GMS_Server {
 				
 				switch( myPacket ) {
 					//--------------------------------------Test Packets--------------------------------------
-					case 0:
-						System.Console.WriteLine( "Packet Received!" );
-					break;
 					case 254:
 						//Disconnection Packet ID;
 						//If the client sends a disconnection packet, stop the client's thread to disconnect the client;
@@ -38,6 +35,7 @@ namespace GMS_Server {
 						//Show an error if the client sends a packet of data with an invalid packet ID;
 						System.Console.WriteLine( "Invalid Packet ID" );
 					break;
+					//----------------------------------------------------------------------------------------
 				}
 
 				//Check the buffer for any appended TCP packets that might have merged;
