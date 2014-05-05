@@ -135,6 +135,9 @@ namespace GMS_Server {
 			Console.WriteLine( "Server IP Address?" );
 			string myIP = Console.ReadLine();
 			
+			Console.WriteLine( "Server Port?" );
+			string myPort = Convert.ToInt32( Console.ReadLine() );
+			
 			Network myNetwork = new Network();
 			Thread myTcpThread = new Thread( () => myNetwork.TcpStart( myIP , 64198 , 256 , 256 , 256 ) );
 			NetworkVars.TcpServerIsOnline = true;
