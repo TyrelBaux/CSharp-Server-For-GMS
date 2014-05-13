@@ -10,10 +10,6 @@ namespace GMS_Server {
 			CmdLog = new System.Collections.Generic.List<string>();
 			CmdClock = new System.Diagnostics.Stopwatch();
 			CmdClock.Start();
-
-			if ( CmdLog.Count >= 100 ) {
-				CmdLog.RemoveAt( 0 );
-			}
 		}
 
 		/// <summary>Stops the command network stack.</summary>
@@ -25,7 +21,11 @@ namespace GMS_Server {
 		/// <summary>Adds a server log line to the end of the command stack.</summary>
 		/// <param name="myLog">Log message to add to the command stack.</param>
 		public static void AppendLog( string myLog ) {
-			CmdLog.Add( myLog );
+			CmdLog.Add( CmdNetwork.CmdClock.ElapsedMilliseconds.ToString() + " : " + myLog );
+
+			if ( CmdLog.Count >= 100 ) {
+				CmdLog.RemoveAt( 0 );
+			}
 		}
 
 		/// <summary>Executes a command based on master user input.</summary>
