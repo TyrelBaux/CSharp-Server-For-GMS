@@ -4,6 +4,7 @@ CSharp-Server-For-GMS
 Special dedicated CSharp server source made for GameMaker: Studio users!
 Below is a brief explanation of each class file and it's importance:
 
+
 ByteBuffer.cs | Buffer Class File:
     This is a class file containing the byte buffer system. Due to the complete isolation of this class file
     you can even paste the class into any other project that requires use of buffers. The buffer system allows
@@ -14,9 +15,11 @@ ByteBuffer.cs | Buffer Class File:
         ByteBuffer myBuffer = new ByteBuffer();
         myBuffer.Create( BufferSize );
 
+
 CmdNetwork.cs | Command Input File:
     The CmdNetwork class file allows you to add an error log to your application as well as perform commands for
     assistance with running your server.
+
 
 MainServer.cs | Primary Server File:
     Inside this class file, is the main code for creating the server and keeping it running. This is where you can
@@ -35,3 +38,17 @@ MainServer.cs | Primary Server File:
 	myUdpThread.IsBackground = false;
 	myUdpThread.Start();
 	Thread.Sleep( 100 );
+
+
+TcpNetwork.cs | TCP Backend Network:
+    
+
+
+
+
+
+
+
+
+
+
