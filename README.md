@@ -17,3 +17,15 @@ ByteBuffer.cs | Buffer Class File:
 CmdNetwork.cs | Command Input File:
     The CmdNetwork class file allows you to add an error log to your application as well as perform commands for
     assistance with running your server.
+
+MainServer.cs | Primary Server File:
+    Inside this class file, is the main code for creating the server and keeping it running. This is where you can
+    add/remove TCP or UDP support for your server. This is also where the main method execution for user inputted
+    commands happens. The class file does have both TCP and UDP networks preset.
+    
+    Here is an example of adding a TCP server network to your application from scratch:
+    
+		Thread myTcpThread = new Thread( () => TcpNetwork.TcpStart( myIP , myPort , myMaxClients , myBufferReadSize , myBufferWriteSize , myBufferAlignment , myPacketHeader ) );
+		myTcpThread.IsBackground = false;
+		myTcpThread.Start();
+		Thread.Sleep( 100 );
