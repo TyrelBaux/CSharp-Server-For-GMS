@@ -28,3 +28,10 @@ MainServer.cs | Primary Server File:
 	myTcpThread.IsBackground = false;
 	myTcpThread.Start();
 	Thread.Sleep( 100 );
+
+    Now here is how it's done for UDP from scratch:
+    
+	Thread myUdpThread = new Thread( () => UdpNetwork.UdpStart( myPort , myBufferReadSize , myBufferWriteSize , myBufferAlignment , myPacketHeader ) );
+	myUdpThread.IsBackground = false;
+	myUdpThread.Start();
+	Thread.Sleep( 100 );
