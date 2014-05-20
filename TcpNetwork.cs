@@ -8,7 +8,6 @@ namespace GMS_Server {
 	public static class TcpNetwork {
 		public static bool TcpServerIsOnline = false;
 		public static List<TcpClient> TcpSocketList;
-		public static List<Thread> TcpThreadList;
 		public static TcpListener TcpListeningSocket;
 		public static IPAddress TcpIPAddress;
 		public static int TcpListeningPort = 0;
@@ -17,7 +16,7 @@ namespace GMS_Server {
 		private static int TcpBufferWriteSize = 0;
 		private static int TcpBufferAlignment = 1;
 		private static int TcpMaxClients = 0;
-		
+
 		/// <summary>Creates and starts the TCP listener(server) on the specified IP address and port.</summary>
 		/// <param name="myTcpIP">IP address of the TCP listener(server).</param>
 		/// <param name="myTcpPort">Port of the TCP listener(server).</param>
@@ -34,14 +33,14 @@ namespace GMS_Server {
 				TcpPacketHeader = ( byte ) myHeader;
 				TcpIPAddress = IPAddress.Parse( myTcpIP );
 				TcpListeningPort = myTcpPort;
-	
+
 				TcpSocketList = new List<TcpClient>( myMaxClients );
-				TcpThreadList = new List<Thread>( myMaxClients );
 				TcpListeningSocket = new TcpListener( TcpIPAddress , TcpListeningPort );
 
 				TcpBufferReadSize = myBufferRSize;
 				TcpBufferWriteSize = myBufferWSize;
 				TcpListeningSocket.Start( myMaxClients );
+
 				TcpAccept();
 			} catch( Exception ) {
 				TcpServerIsOnline = false;
@@ -58,11 +57,11 @@ namespace GMS_Server {
 						TcpSocketList.Add( myClient );
 						myClient.NoDelay = true;
 						
-						Thread myThread = new Thread( () => TcpNetwork.TcpHandle( myClient ) );
-						TcpThreadList.Add( myThread );
-						myThread.Start();
+						ThreadPool.QueueUserWorkItem( myThread => TcpHandle( myClient ) );
 					}
-				} catch( Exception ) {}
+				} catch( Exception ) {
+					TcpServerIsOnline = false;
+				}
 			}
 
 			TcpNetwork.TcpExit();
@@ -81,9 +80,9 @@ namespace GMS_Server {
 			myBufferW.Create( TcpBufferWriteSize , TcpBufferAlignment );
 
 			if ( TcpSocketList.Count <= TcpMaxClients ) {
-				CmdNetwork.AppendLog( CmdNetwork.CmdClock.ElapsedMilliseconds.ToString() + " : Client : " + TcpSocketList.FindIndex( x => x == myClient ).ToString() + " Connected;" );
+				CmdNetwork.AppendLog( "Client Connected : " + ( ( IPEndPoint ) myClient.Client.RemoteEndPoint ).Address.ToString() );
 				bool myThreading = true;
-	
+
 				while( myThreading ) {
 					try {
 						if ( myStream.DataAvailable == true ) {
@@ -91,11 +90,11 @@ namespace GMS_Server {
 							Array.Clear( myBufferW.Buffer , 0 , TcpBufferWriteSize );
 							myBufferR.BytePeek = 0;
 							myBufferW.BytePeek = 0;
-	
+
 							int mySize = myClient.Available;
 							await myStream.ReadAsync( myBufferR.Buffer , 0 , mySize );
 							IPEndPoint myIPEndPoint = ( IPEndPoint ) myClient.Client.RemoteEndPoint;
-	
+
 							TcpPackets.TcpPacketRead( ref myIPEndPoint , ref myStream , ref myThreading , ref myBufferR , ref myBufferW );
 						}
 
@@ -103,13 +102,13 @@ namespace GMS_Server {
 					} catch( Exception ) {
 						myThreading = false;
 					}
-	
+
 					if ( myClient.Connected == false ) {
 						myThreading = false;
 					}
 				}
-				
-				CmdNetwork.AppendLog( CmdNetwork.CmdClock.ElapsedMilliseconds.ToString() + " : Client: " + TcpSocketList.FindIndex( x => x == myClient ).ToString() + " Disconnected;" );
+
+				CmdNetwork.AppendLog( "Client Disconnected : " + ( ( IPEndPoint ) myClient.Client.RemoteEndPoint ).Address.ToString() );
 			} else {
 				myBufferW.Writeu8( TcpPacketHeader );
 				myBufferW.Writeu8( 254 );
@@ -117,7 +116,6 @@ namespace GMS_Server {
 			}
 
 			int myID = TcpSocketList.FindIndex( x => x == myClient );
-			TcpThreadList.RemoveAt( myID );
 			TcpSocketList.RemoveAt( myID );
 
 			myStream.Close();
@@ -126,10 +124,6 @@ namespace GMS_Server {
 
 		/// <summary>Finalizes closing the server properly.</summary>
 		private static void TcpExit() {
-			foreach( Thread myThread in TcpThreadList ) {
-				myThread.Abort();
-			}
-
 			foreach( TcpClient myClient in TcpSocketList ) {
 				myClient.GetStream().Close();
 				myClient.Close();
