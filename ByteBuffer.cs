@@ -67,7 +67,9 @@ namespace GMS_Server {
 		/// <param name="mySendPort">Port to send the data on.</param>
 		public async void SendUdp( string mySendIP , int mySendPort ) {
 			try {
-				await UdpNetwork.UdpListeningSocket.SendAsync( Buffer , BytePeek , mySendIP , mySendPort );
+				System.Net.IPAddress myAddress = System.Net.IPAddress.Parse( mySendIP );
+				System.Net.IPEndPoint myEndPoint = new System.Net.IPEndPoint( myAddress , mySendPort );
+				await UdpNetwork.UdpListeningSocket.SendAsync( Buffer , BytePeek , myEndPoint );
 			} catch( System.Exception ) {}
 		}
 
