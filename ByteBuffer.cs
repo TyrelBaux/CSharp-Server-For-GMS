@@ -39,8 +39,7 @@ namespace GMS_Server {
 		/// <param name="endProtocol">Set to true if ending a TCP packet, false if ending a UDP packet.</param>
 		public byte EndRead( bool endProtocol ) {
 			BytePeek -= ( endProtocol == true ) ? EndType : 0;
-			byte myHeader = Readu8();
-			return myHeader;
+			return ( endProtocol == true ) ? Readu8() : ( byte ) 0;
 		}
 
 		/// <summary>Creates the new buffer for the instance of the ByteBuffer class.</summary>
@@ -65,10 +64,9 @@ namespace GMS_Server {
 		/// <summary>Sends a UDP message to the specified IP address and Port.</summary>
 		/// <param name="mySendIP">IP address to send the data to.</param>
 		/// <param name="mySendPort">Port to send the data on.</param>
-		public async void SendUdp( string mySendIP , int mySendPort ) {
+		public async void SendUdp( System.Net.IPAddress mySendIP , int mySendPort ) {
 			try {
-				System.Net.IPAddress myAddress = System.Net.IPAddress.Parse( mySendIP );
-				System.Net.IPEndPoint myEndPoint = new System.Net.IPEndPoint( myAddress , mySendPort );
+				System.Net.IPEndPoint myEndPoint = new System.Net.IPEndPoint( mySendIP , mySendPort );
 				await UdpNetwork.UdpListeningSocket.SendAsync( Buffer , BytePeek , myEndPoint );
 			} catch( System.Exception ) {}
 		}
