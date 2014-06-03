@@ -14,7 +14,7 @@ namespace GMS_Server {
 
 				switch( myPacket ) {
 					case 0:
-						// Empty sample messagewith an ID of 0.
+						// Empty sample message with an ID of 0.
 					break;
 					default:
 						// This case executes when a message with an invalid packet ID is received.
