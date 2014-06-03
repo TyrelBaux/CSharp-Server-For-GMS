@@ -59,7 +59,10 @@ namespace GMS_Server {
 						Console.WriteLine( "(TCP) Server Status: " + TcpNetwork.TcpServerIsOnline.ToString() );
 					break;
 					case "server.udpstat":
-						Console.WriteLine( "(UDP) Server Status: " + TcpNetwork.TcpServerIsOnline.ToString() );
+						Console.WriteLine( "(UDP) Server Status: " + UdpNetwork.UdpServerIsOnline.ToString() );
+					break;
+					case "server.clearlog":
+						CmdLog.Clear();
 					break;
 					default:
 						Console.WriteLine( "Error: Invalid Command Input." );
